@@ -1,6 +1,6 @@
 import logging
 import sys
-from config_reader import config_reader
+from config_reader.config_reader import config_reader
 
 
 log_level = config_reader.logging_level
@@ -8,8 +8,8 @@ log_format = config_reader.logging_format
 
 
 class CustomLogger:
-    def __init__(self, log_file_path: str):
-        self.logger = logging.getLogger(f"{__name__}")
+    def __init__(self, log_file_path: str, module_name: str = None):
+        self.logger = logging.getLogger(module_name)
         self.logger.setLevel(log_level)
 
         formatter = logging.Formatter(log_format)

@@ -1,9 +1,9 @@
 from flask import Flask, jsonify, request
-from config_reader import config_reader
-from logger import CustomLogger
+from config_reader.config_reader import config_reader
+from logger.logger import CustomLogger
 
-log_file_path = config_reader.log_file_path(path="logs/app.log")
-logger = CustomLogger(log_file_path).logger
+log_file_path = config_reader.log_file_path(path="logs/app_logs/app.log")
+logger = CustomLogger(log_file_path, module_name="app").logger
 app = Flask(__name__)
 products = {}
 
@@ -76,7 +76,3 @@ def get_product_by_id(product_id):
     except ValueError:
         logger.error("Invalid product ID format. Expected integer.")
         return jsonify({"error": "Invalid product ID format. Expected a number."}), 400
-
-
-if __name__ == "__main__":
-    app.run(debug=config_reader.logging_level)

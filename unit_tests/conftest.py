@@ -1,13 +1,12 @@
 import sys
 import pytest
 import requests
+from config_reader.config_reader import config_reader
+from logger.logger import CustomLogger
 
-from config_reader import config_reader
-from logger import CustomLogger
 
-
-log_file_path = config_reader.log_file_path(path="logs/unit_tests.log")
-logger = CustomLogger(log_file_path).logger
+log_file_path = config_reader.log_file_path(path="logs/unit_tests_logs/unit_tests.log")
+logger = CustomLogger(log_file_path, module_name="unit_tests_conftest").logger
 HOST = config_reader.host
 
 
