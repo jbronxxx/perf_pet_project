@@ -1,12 +1,13 @@
 import sys
 import requests
 from requests import Response
-from config_reader.config_reader import config_reader
+
+import constants
+from config_reader.config_reader import config
 from logger.logger import CustomLogger
 
-log_file_path = config_reader.log_file_path("logs/unit_tests_logs/unit_tests.log")
-logger = CustomLogger(log_file_path, module_name="test_app").logger
-HOST = config_reader.host
+logger = CustomLogger(log_file_path=constants.UNIT_TESTS_LOGS_PATH, module_name="test_app").logger
+HOST = config.local_host
 
 
 def test_products_list(create_product: None):

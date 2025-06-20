@@ -1,11 +1,5 @@
+local_host: "127.0.0.1:5000"
+
 logging:
   level: DEBUG
   formatter: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-  loggers:
-    - "app"
-    - "flask"
-    - "unit_tests"
-
-log_file_paths:
-  - "logs/app_logs/app.log"
-  - "logs/unit_tests_logs/unit_tests.log"

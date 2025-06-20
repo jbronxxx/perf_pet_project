@@ -21,83 +21,50 @@ class ConfigReader:
         return self._config
 
     @property
-    def logging_config(self):
-        return self.config_file.get("logging")
-
-    @property
-    def host(self) -> str:
-        """Get the host value from the config file."""
-        host_value = constants.HOST
+    def local_host(self) -> str:
+        """Get the local_host value from the config file."""
+        host_value = self.log_config.get("local_host")
         if not isinstance(host_value, str):
             raise TypeError(
-                f"Incorrect type for type for 'host': {type(host_value).__name__}"
+                f"Incorrect type for 'local_host': {type(host_value).__name__}"
             )
         return host_value
 
     @property
-    def logging_level(self) -> str:
+    def log_config(self):
+        return self.config_file.get("logging")
+
+    @property
+    def log_level(self) -> str:
         """Get the logging level value from the config file."""
-        level_value = self.logging_config.get("level")
+        level_value = self.log_config.get("level")
         if not isinstance(level_value, str):
             raise TypeError(
-                f"Incorrect type for type for 'logging.level': {type(level_value).__name__}"
+                f"Incorrect type for 'log_level': {type(level_value).__name__}"
             )
         return level_value
 
     @property
-    def log_file_paths(
+    def root_log_file_path(
         self,
-    ) -> list[str]:
-        """Get the log file paths from the config file."""
-        paths = self.config_file.get("log_file_paths")
-        if not isinstance(paths, (list, tuple)):
+    ) -> str:
+        """Get the logs files root path from the config file."""
+        root_log_path = constants.LOGS_PATH
+        if not isinstance(root_log_path, str):
             raise TypeError(
-                f"Incorrect type for type for 'log_file_file': {type(paths).__name__}"
+                f"Incorrect type for 'root_log_file_path': {type(root_log_path).__name__}"
             )
-        return [str(path) for path in paths]
-
-    def log_file_path(self, path: str) -> str:
-        """Get the log file path from the config file."""
-        paths = self.log_file_paths
-        if not isinstance(paths, (list, tuple)):
-            raise TypeError(
-                f"Incorrect type for type for 'log_file_paths': {type(paths).__name__}"
-            )
-
-        result = [result_path for result_path in paths if result_path == path]
-        return result[0]
+        return root_log_path
 
     @property
-    def logging_format(self) -> str:
+    def log_format(self) -> str:
         """Get the logging format from the config file."""
-        formatter_value = self.logging_config.get("formatter")
+        formatter_value = self.log_config.get("formatter")
         if not isinstance(formatter_value, str):
             raise TypeError(
-                f"Incorrect type for type for 'logging.formatter': {type(formatter_value).__name__}"
+                f"Incorrect type for 'formatter': {type(formatter_value).__name__}"
             )
         return formatter_value
 
-    @property
-    def loggers_list(self) -> list[str]:
-        """Get the loggers list from the config file."""
-        loggers = self.logging_config.get("loggers")
-        if not isinstance(loggers, (list, tuple)):
-            raise TypeError(
-                f"Incorrect type for type for 'logging.loggers': {type(loggers).__name__}"
-            )
-        return [str(logger) for logger in loggers]
 
-    @property
-    def database_config(self) -> dict:
-        """Get the database configuration from the config file."""
-        return {
-            "db_type": constants.DB_TYPE,
-            "db_host": self.host,
-            "user": constants.DB_USER,
-            "password": constants.DB_PASSWORD,
-            "port": int(constants.DB_PORT),
-            "name": constants.DB_NAME,
-        }
-
-
-config_reader = ConfigReader()
+config = ConfigReader()
