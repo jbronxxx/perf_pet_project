@@ -19,9 +19,4 @@ logs/*.log
 
 .env
 .pytest_cache/
-Dockerfile.python
-
-*.egg-info
-
-app_config.yaml
-settings.json
+.idea/
