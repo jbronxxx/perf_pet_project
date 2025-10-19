@@ -2,8 +2,6 @@ import constants
 import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 
-
-
 DB_NAME = constants.DB_NAME
 DB_USER = constants.DB_USER
 DB_PASSWORD = constants.DB_PASSWORD

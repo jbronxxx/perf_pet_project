@@ -2,8 +2,8 @@ import constants
 import psycopg2
 from logger.logger import CustomLogger
 
-
 log = CustomLogger(log_file_path=constants.DB_PROVIDER_LOGS_PATH, module_name="db_provider").logger
+
 
 class DBProvider:
     def __init__(self):
@@ -28,4 +28,3 @@ class DBProvider:
         log.info("Closing the connection to database")
         if self.connection is not None:
             self.connection.close()
-

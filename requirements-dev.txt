@@ -3,5 +3,10 @@
 # For running tests
 pytest~=8.3.5
 
+# For code quality and formatting
+pre-commit
+darker
+flake8
+
 # Include all production dependencies as well
 -r requirements.txt

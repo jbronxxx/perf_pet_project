@@ -23,7 +23,7 @@ class ConfigReader:
     @property
     def local_host(self) -> str:
         """Get the local_host value from the config file."""
-        host_value = self.log_config.get("local_host")
+        host_value = self.config_file.get("local_host")
         if not isinstance(host_value, str):
             raise TypeError(
                 f"Incorrect type for 'local_host': {type(host_value).__name__}"

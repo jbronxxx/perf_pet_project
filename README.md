@@ -47,48 +47,45 @@ Follow these instructions to get the project up and running on your local machin
 
 ## Development
 
-### Useful Docker Commands
+### Code Quality and Formatting
 
-*   **Start services in the background:**
+This project uses `pre-commit` hooks to ensure consistent code style and quality. Before every commit, the following checks are automatically performed:
+
+*   **`darker`**: Formats Python code using `black` (with a line length of 100 characters) and sorts imports using `isort`. `darker` only reformats changed lines, making it efficient.
+*   **`flake8`**: Lints Python code to catch common errors and style violations (with a maximum line length of 100 characters).
+
+#### Setup
+
+1.  **Install development dependencies:**
+    Ensure you have the development dependencies installed, which includes `pre-commit`, `darker`, and `flake8`.
     ```sh
-    docker-compose up -d
+    pip install -r requirements-dev.txt
     ```
 
-*   **Stop services:**
-    This command stops the containers but preserves the database data.
+2.  **Install Git hooks:**
+    Activate the `pre-commit` hooks for your local Git repository. This only needs to be done once per repository clone.
     ```sh
-    docker-compose down
+    pre-commit install
     ```
 
-*   **Stop services and delete data:**
-    To stop the containers and completely wipe the database volume (useful for a clean start):
-    ```sh
-    docker-compose down -v
-    ```
+#### Usage
 
-*   **View logs:**
-    You can view the logs for all services or a specific one.
-    ```sh
-    # View all logs
-    docker-compose logs -f
+*   **Automatic checks on commit:**
+    Once installed, `pre-commit` will automatically run `darker` and `flake8` on staged files before each commit. If any issues are found, `pre-commit` will either fix them automatically (e.g., `darker`) or report them, preventing the commit until they are resolved.
 
-    # View logs for the app service only
-    docker-compose logs -f app
-    ```
-
-*   **Access a running container:**
-    To get a shell inside the running `app` container for debugging:
+*   **Manually run all checks:**
+    To run all `pre-commit` checks on all files in the project at any time (e.g., before pushing to a remote repository), use:
     ```sh
-    docker-compose exec app bash
+    pre-commit run --all-files
     ```
+    This is useful for ensuring the entire codebase adheres to the defined standards.
+
+*   **Addressing `flake8` errors:**
+    `flake8` will report errors that `darker` cannot automatically fix (e.g., very long string literals, complex expressions that would break if reformatted). These errors (like `E501 line too long`) must be fixed manually.
 
 ### Running Tests
 
-To run the test suite, first ensure you have installed the development dependencies locally:
-```sh
-pip install -r requirements-dev.txt
-```
-Then, run pytest:
+To run the test suite, ensure you have activated your Python virtual environment and then run `pytest`:
 ```sh
 pytest
 ```
