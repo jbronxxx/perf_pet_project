@@ -1,7 +1,9 @@
+# Production dependencies
 Flask~=3.1.1
-logger~=1.4
-requests~=2.32.3
-pytest~=8.3.5
-PyYAML~=6.0.2
 psycopg2-binary~=2.9.10
 python-dotenv~=1.1.0
+
+# Used by the application (example)
+requests~=2.32.3
+PyYAML~=6.0.2
+logger~=1.4
