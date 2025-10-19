@@ -1,45 +1,55 @@
-version: "3.9"
+# docker-compose.yml for development environment
 
 services:
   db:
     image: postgres:17.5
-    container_name: perf_pet_project-db
+    # A fixed container name is convenient for development, e.g., for direct commands.
+    container_name: db
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
     volumes:
+      # Executes .sql scripts from this folder on first launch to initialize the DB.
       - ./db:/docker-entrypoint-initdb.d
+      # Persists database data across container restarts.
       - db_data:/var/lib/postgresql/data
-    restart: always
+    # Expose port to connect to the DB from the host machine (e.g., via DBeaver).
     ports:
       - "5432:5432"
     networks:
       - app_net
+    # Healthcheck ensures the app waits until the database is ready.
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}" ]
       interval: 5s
       timeout: 3s
       retries: 5
+    # Restart on failure, but not when the Docker daemon starts.
+    restart: unless-stopped
 
   app:
     build: .
-    container_name: perf_pet_project-app
+    # No container_name here to allow scaling (e.g., `docker-compose up --scale app=3`).
     env_file:
       - .env
-    depends_on:
-      db:
-        condition: service_healthy
-    volumes:
-      - .:/app
-    restart: always
-    networks:
-      - app_net
     ports:
       - "8080:5000"
+    networks:
+      - app_net
+    volumes:
+      # Mounts the application code into the container for live-reloading on changes.
+      - .:/app
+    depends_on:
+      # Ensures the app starts only after the database is healthy.
+      db:
+        condition: service_healthy
+    restart: unless-stopped
 
+# Defines a common network for inter-container communication.
 networks:
   app_net:
 
+# Defines a named volume for persisting database data.
 volumes:
   db_data:
