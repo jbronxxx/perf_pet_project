@@ -1,6 +1,7 @@
 import os
 import sys
 from dotenv import load_dotenv
+
 load_dotenv()
 
 ROOT_PATH = os.path.dirname(os.path.abspath(__file__))

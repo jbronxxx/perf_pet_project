@@ -6,8 +6,9 @@ import constants
 from config_reader.config_reader import config
 from logger.logger import CustomLogger
 
-
-logger = CustomLogger(log_file_path=constants.UNIT_TESTS_LOGS_PATH, module_name="unit_tests_conftest").logger
+logger = CustomLogger(
+    log_file_path=constants.UNIT_TESTS_LOGS_PATH, module_name="unit_tests_conftest"
+).logger
 HOST = config.local_host
 
 

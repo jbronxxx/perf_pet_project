@@ -14,9 +14,10 @@ def test_products_list(create_product: None):
     logger.info(f"Test '{sys._getframe(0).f_code.co_name}' started")
     with requests.get(f"{HOST}/api/get_products_list") as response:
         logger.info(f"Assert that '{response.status_code}' equals 200")
-        assert (
-            response.status_code == 200
-        ), f"Failed to get products list. Response status code: {response.status_code}, text: {response.text}"
+        assert response.status_code == 200, (
+            f"Failed to get products list."
+            f" Response status code: {response.status_code}, text: {response.text}"
+        )
 
 
 def test_create_product(create_product: Response):

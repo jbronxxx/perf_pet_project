@@ -1,9 +1,8 @@
 from flask import Flask, jsonify, request
 
 import constants
-from config_reader.config_reader import config
 from db.db_products import DbProduct
-from logger.logger import  CustomLogger
+from logger.logger import CustomLogger
 
 log = CustomLogger(log_file_path=constants.APP_LOGS_PATH, module_name="app").logger
 
@@ -30,7 +29,6 @@ def create_product():
         f"Created product: id: {returning_id}, name: {data['name']}, price: {data['price']}"
     )
     return jsonify({"id": returning_id, "name": data["name"], "price": data["price"]})
-
 
 # @app.route("/api/get_products_list", methods=["GET"])
 # def get_product_list():

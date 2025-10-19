@@ -75,3 +75,6 @@ db_data/
 # Log files
 logs/
 *.log
+
+# pre-commit cache
+.pre-commit-cache/
