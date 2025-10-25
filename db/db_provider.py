@@ -1,8 +1,9 @@
-import constants
 import psycopg2
+
+from constants import DB_HOST, DB_LOGS_PATH, DB_NAME, DB_PASSWORD, DB_PORT, DB_USER
 from logger.logger import CustomLogger
 
-log = CustomLogger(log_file_path=constants.DB_PROVIDER_LOGS_PATH, module_name="db_provider").logger
+log = CustomLogger(log_file_path=DB_LOGS_PATH, module_name="db_provider").logger
 
 
 class DBProvider:
@@ -13,11 +14,11 @@ class DBProvider:
         log.info("Connecting to the database")
         try:
             self.connection = psycopg2.connect(
-                host=constants.DB_HOST,
-                user=constants.DB_USER,
-                password=constants.DB_PASSWORD,
-                database=constants.DB_NAME,
-                port=constants.DB_PORT,
+                host=DB_HOST,
+                user=DB_USER,
+                password=DB_PASSWORD,
+                database=DB_NAME,
+                port=DB_PORT,
             )
             log.info("Connected to the database successfully")
         except psycopg2.Error as e:

@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
+CONFIG_PATH = os.path.join(ROOT_PATH, "app_config.yaml")
 
 if ROOT_PATH not in sys.path:
     sys.path.append(ROOT_PATH)
@@ -22,7 +23,6 @@ DB_NAME = os.getenv("DB_NAME")
 
 # logs paths
 LOGS_PATH = os.path.join(ROOT_PATH, "logs")
-APP_LOGS_PATH = f"{LOGS_PATH}/app_logs/app.log"
-UNIT_TESTS_LOGS_PATH = f"{LOGS_PATH}/unit_tests_logs/unit_tests.log"
-DB_PROVIDER_LOGS_PATH = f"{LOGS_PATH}/db_logs/db_provider.log"
-DB_PRODUCTS_LOGS_PATH = f"{LOGS_PATH}/db_logs/products_db.log"
+APP_LOGS_PATH = os.path.join(LOGS_PATH, "app.log")
+DB_LOGS_PATH = os.path.join(LOGS_PATH, "db.log")
+UNIT_TESTS_LOGS_PATH = os.path.join(LOGS_PATH, "unit_tests.log")

@@ -1,23 +1,26 @@
+from typing import Any
+
 import yaml
-import constants
+
+from constants import CONFIG_PATH
 
 
 class ConfigReader:
     def __init__(self):
         self._read_config_file()
 
-    def _read_config_file(self):
+    def _read_config_file(self) -> None:
         """Read the config file and store it in a dictionary."""
         try:
-            with open("app_config.yaml", "r") as stream:
+            with open(CONFIG_PATH, "r") as stream:
                 self._config = yaml.safe_load(stream)
         except FileNotFoundError:
-            raise ValueError("Config file not found")
+            raise ValueError(f"Config file not found at: {CONFIG_PATH}")
         except PermissionError:
             raise ValueError("Not enough permissions to read config file")
 
     @property
-    def config_file(self):
+    def config_file(self) -> dict[str, Any]:
         return self._config
 
     @property
@@ -31,12 +34,15 @@ class ConfigReader:
         return host_value
 
     @property
-    def log_config(self):
+    def log_config(self) -> dict | None:
+        """Get the logging section from the config file."""
         return self.config_file.get("logging")
 
     @property
     def log_level(self) -> str:
         """Get the logging level value from the config file."""
+        if self.log_config is None:
+            raise ValueError("'logging' section not found in config file")
         level_value = self.log_config.get("level")
         if not isinstance(level_value, str):
             raise TypeError(
@@ -45,20 +51,10 @@ class ConfigReader:
         return level_value
 
     @property
-    def root_log_file_path(
-        self,
-    ) -> str:
-        """Get the logs files root path from the config file."""
-        root_log_path = constants.LOGS_PATH
-        if not isinstance(root_log_path, str):
-            raise TypeError(
-                f"Incorrect type for 'root_log_file_path': {type(root_log_path).__name__}"
-            )
-        return root_log_path
-
-    @property
     def log_format(self) -> str:
         """Get the logging format from the config file."""
+        if self.log_config is None:
+            raise ValueError("'logging' section not found in config file")
         formatter_value = self.log_config.get("formatter")
         if not isinstance(formatter_value, str):
             raise TypeError(

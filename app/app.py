@@ -1,10 +1,11 @@
-from flask import Flask, jsonify, request
+from flask import Flask, Response, jsonify, request
+from psycopg2 import OperationalError
 
-import constants
+from constants import APP_LOGS_PATH
 from db.db_products import DbProduct
 from logger.logger import CustomLogger
 
-log = CustomLogger(log_file_path=constants.APP_LOGS_PATH, module_name="app").logger
+log = CustomLogger(log_file_path=APP_LOGS_PATH, module_name="app").logger
 
 log.info("Starting app")
 app = Flask(__name__)
@@ -12,23 +13,38 @@ db_product = DbProduct()
 
 
 @app.route("/api/create_product", methods=["POST"])
-def create_product():
+def create_product() -> tuple[Response, int] | Response:
     data = request.get_json()
-    if "name" not in data or "price" not in data:
-        log.error("Invalid request format. Must include 'name' and 'price'")
-        return (
-            jsonify(
-                {
-                    "error": 'Invalid request format. Must include "name" and "price" fields.'
-                }
-            ),
-            400,
-        )
-    returning_id = db_product.create_product(data["name"], data["price"])
-    log.info(
-        f"Created product: id: {returning_id}, name: {data['name']}, price: {data['price']}"
-    )
-    return jsonify({"id": returning_id, "name": data["name"], "price": data["price"]})
+
+    if not data:
+        return jsonify({"error": "Request must be a valid JSON"}), 400
+
+    try:
+        name = data.get("name")
+        price = data.get("price")
+
+        if not isinstance(name, str) or not name.strip():
+            return jsonify({"error": "Field 'name' must be a non-empty string"}), 400
+
+        if not isinstance(price, (int, float)) or price <= 0:
+            return jsonify({"error": "Field 'price' must be a positive number"}), 400
+
+        returning_id = db_product.create_product(name, price)
+
+        if returning_id is None:
+            log.warning(f"Attempted to create a product with a duplicate name: {name}")
+            return jsonify({"error": f"Product with the name '{name}' already exists"}), 409
+
+    except OperationalError as e:
+        log.warning(f"Database connection error: {e}")
+        return jsonify({"error": "The database currently unavailable"}), 503
+
+    except Exception as e:
+        log.error(f"An unexpected error occurred while creating a product '{name}': {e}'")
+        return jsonify({"error": "An internal server error occurred."}), 500
+
+    log.info(f"Created product: id: {returning_id}, name: {name}, price: {price}")
+    return jsonify({"id": returning_id, "name": name, "price": price})
 
 # @app.route("/api/get_products_list", methods=["GET"])
 # def get_product_list():
