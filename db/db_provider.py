@@ -29,3 +29,9 @@ class DBProvider:
         log.info("Closing the connection to database")
         if self.connection is not None:
             self.connection.close()
+
+    def check_connection(self) -> bool:
+        if self.connection is None:
+            log.error("Connection to database not established")
+            raise ConnectionError("Connection to database not established")
+        return True
