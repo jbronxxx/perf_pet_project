@@ -71,10 +71,12 @@ def get_products() -> tuple[Response, int] | Response:
         total_pages = math.ceil(total_items / limit) if total_items > 0 else 1
 
         final_response = {
-            "totalItems": total_items,
-            "totalPages": total_pages,
-            "currentPage": page,
-            "limit": limit,
+            "metaInformation": {
+                "totalItems": total_items,
+                "totalPages": total_pages,
+                "currentPage": page,
+                "limit": limit,
+            },
             "products": products_list,
         }
 
