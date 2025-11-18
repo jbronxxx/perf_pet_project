@@ -6,12 +6,19 @@ from psycopg2 import OperationalError
 from constants import APP_LOGS_PATH
 from db.db_products import DbProduct
 from logger.logger import CustomLogger
+from .middlewares.metrics import register_metrics
 
 log = CustomLogger(log_file_path=APP_LOGS_PATH, module_name="app").logger
 
 log.info("Starting app")
 app = Flask(__name__)
 db_product = DbProduct()
+register_metrics(app)
+
+
+@app.route("/", methods=["GET"])
+def health_check() -> Response:
+    return jsonify(status="ok", name="Simple Flask API")
 
 
 @app.route("/api/create_product", methods=["POST"])
@@ -93,7 +100,7 @@ def get_products() -> tuple[Response, int] | Response:
 
 
 @app.route("/api/get_product/<product_id>", methods=["GET"])
-def get_product_by_id(product_id) -> tuple[Response, int] | Response:
+def get_product_by_id(product_id: int) -> tuple[Response, int] | Response:
     try:
         expected_product_id = int(product_id)
     except ValueError:
