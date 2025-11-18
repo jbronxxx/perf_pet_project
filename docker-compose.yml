@@ -1,9 +1,6 @@
-# docker-compose.yml for development environment
-
 services:
   db:
     image: postgres:17.5
-    # A fixed container name is convenient for development, e.g., for direct commands.
     container_name: db
     environment:
       POSTGRES_USER: ${DB_USER}
@@ -14,7 +11,6 @@ services:
       - ./db:/docker-entrypoint-initdb.d
       # Persists database data across container restarts.
       - db_data:/var/lib/postgresql/data
-    # Expose port to connect to the DB from the host machine (e.g., via DBeaver).
     ports:
       - "5432:5432"
     networks:
@@ -30,7 +26,6 @@ services:
 
   app:
     build: .
-    # No container_name here to allow scaling (e.g., `docker-compose up --scale app=3`).
     env_file:
       - .env
     ports:
@@ -46,10 +41,50 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
-# Defines a common network for inter-container communication.
+  postgres-exporter:
+    image: quay.io/prometheuscommunity/postgres-exporter
+    container_name: postgres-exporter
+    environment:
+      - DATA_SOURCE_NAME=postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}?sslmode=disable
+    networks:
+      - app_net
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    networks:
+      - app_net
+    depends_on:
+      - app
+      - postgres-exporter
+    command: '--config.file=/etc/prometheus/prometheus.yml'
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - app_net
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+
 networks:
   app_net:
 
-# Defines a named volume for persisting database data.
 volumes:
   db_data:
+  prometheus_data:
+  grafana_data:
