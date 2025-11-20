@@ -47,6 +47,23 @@ Follow these instructions to get the project up and running on your local machin
 
 ## Development
 
+### Making Changes During Development
+
+Thanks to Docker volumes, the development workflow is streamlined.
+
+*   **Changing Python Code:** When you modify any `.py` file, the changes are automatically reflected inside the running container. You **do not** need to restart or rebuild the container. The Flask development server will detect the changes and reload automatically.
+
+*   **Changing Dependencies:** If you add, remove, or change a package in `requirements.txt`, you **must** rebuild the application image for the changes to take effect. Run the following command:
+    ```sh
+    docker-compose up -d --build
+    ```
+
+*   **Resetting the Database:** To completely wipe the database and start fresh, you need to stop the containers and remove the volume where the database data is stored. Use this command:
+    ```sh
+    docker-compose down -v
+    ```
+    After that, you can start everything again with `docker-compose up -d`.
+
 ### Code Quality and Formatting
 
 This project uses `pre-commit` hooks to ensure consistent code style and quality. Before every commit, the following checks are automatically performed:

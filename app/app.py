@@ -21,7 +21,7 @@ def health_check() -> Response:
     return jsonify(status="ok", name="Simple Flask API")
 
 
-@app.route("/api/create_product", methods=["POST"])
+@app.route("/api/add-product", methods=["POST"])
 def create_product() -> tuple[Response, int] | Response:
     data = request.get_json()
 
@@ -38,7 +38,7 @@ def create_product() -> tuple[Response, int] | Response:
         if not isinstance(price, (int, float)) or price <= 0:
             return jsonify({"error": "Field 'price' must be a positive number"}), 400
 
-        returning_id = db_product.create_product(name, price)
+        returning_id = db_product.create_product(name=name, price=price)
 
         if returning_id is None:
             log.warning(f"Attempted to create a product with a duplicate name: {name}")
@@ -56,7 +56,7 @@ def create_product() -> tuple[Response, int] | Response:
     return jsonify({"id": returning_id, "name": name, "price": price})
 
 
-@app.route("/api/get_products", methods=["GET"])
+@app.route("/api/products", methods=["GET"])
 def get_products() -> tuple[Response, int] | Response:
     try:
         page = request.args.get("page", default=1, type=int)
@@ -99,7 +99,7 @@ def get_products() -> tuple[Response, int] | Response:
         return jsonify({"error": "An internal server error occurred."}), 500
 
 
-@app.route("/api/get_product/<product_id>", methods=["GET"])
+@app.route("/api/get-product/<product_id>", methods=["GET"])
 def get_product_by_id(product_id: int) -> tuple[Response, int] | Response:
     try:
         expected_product_id = int(product_id)
@@ -108,7 +108,7 @@ def get_product_by_id(product_id: int) -> tuple[Response, int] | Response:
         return jsonify({"error": "Invalid product ID format. Expected a number."}), 400
 
     try:
-        product = db_product.get_product_by_id(expected_product_id)
+        product = db_product.get_product_by_id(product_id=expected_product_id)
 
         if not product:
             log.info(f"Product with id: {expected_product_id} not found")

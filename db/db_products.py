@@ -15,7 +15,7 @@ class DbProduct:
         self.provider.connect()
         self.connection = self.provider.connection
 
-    def create_product(self, product_name: str, product_price: float) -> int | None:
+    def create_product(self, name: str, price: float) -> int | None:
         self.provider.check_connection()
 
         sql = """
@@ -24,18 +24,16 @@ class DbProduct:
 
         try:
             with self.connection.cursor() as cursor:
-                if not self.get_product_by_name(product_name):
-                    log.info(
-                        f"Creating product with name '{product_name}' and price {product_price}"
-                    )
-                    cursor.execute(sql, (product_name, product_price))
+                if not self.get_product_by_name(name):
+                    log.info(f"Creating product with name '{name}' and price {price}")
+                    cursor.execute(sql, (name, price))
                     self.connection.commit()
                     returning_id = cursor.fetchone()[0]
 
                     log.info(f"Product created with id {returning_id}")
                     return returning_id
                 else:
-                    log.warning(f"Product with name '{product_name}' already exists")
+                    log.warning(f"Product with name '{name}' already exists")
                     return None
         except Exception as e:
             self.connection.rollback()
